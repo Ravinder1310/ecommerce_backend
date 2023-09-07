@@ -1,5 +1,6 @@
 import express from "express"
-import {registerController,loginController}  from "../controllers/authController.js"
+import {registerController,loginController, forgotPasswordController}  from "../controllers/authController.js"
+import { LoginMiddleware } from "../middleware/authMiddleware.js";
 
 // router obj
 const router = express.Router();
@@ -12,5 +13,15 @@ router.post('/register',registerController);
 // Login || METHOD POST
 
 router.post('/login', loginController);
+
+// forgot password
+
+router.post('/forgot-password', forgotPasswordController)
+
+// protected route auth
+
+router.get('/user-auth',LoginMiddleware, (req,res) => {
+    res.status(200).send({ok:true}); 
+})
 
 export default router;

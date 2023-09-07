@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import UserModel from "../models/UserModel";
+import UserModel from "../models/UserModel.js";
 
 // proctected route token base
 export const LoginMiddleware = async(req,res,next) => {

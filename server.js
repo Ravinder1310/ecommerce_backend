@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from 'morgan';
 import Connection  from './config/db.js';
 import router from './routes/authRoute.js';
+import cors from "cors";
 
 //configure env
 dotenv.config();
@@ -13,6 +14,7 @@ Connection();
 // rest obj
 
 const app = express();
+app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'));
 
