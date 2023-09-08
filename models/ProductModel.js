@@ -23,12 +23,12 @@ const productSchema = new mongoose.Schema({
         ref:'Category',
         required:true
     },
-    quality:{
+    quantity:{
         type:Number,
         required:true
     },
     photo:{
-        type:Buffer,
+        data:Buffer,
         contentType:String
     },
     shipping:{

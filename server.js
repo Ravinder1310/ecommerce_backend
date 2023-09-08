@@ -22,7 +22,8 @@ app.use(morgan('dev'));
 
 // routes
 app.use('/api/v1/auth',router);
-app.use('/api/v1/category', CategoryRoutes)
+app.use('/api/v1/category', CategoryRoutes);
+app.use('/api/v1/product',ProductRoutes)
 
 
 app.get("/", (req,res)=>{
