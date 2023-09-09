@@ -97,7 +97,7 @@ export const getSingleProductController = async(req,res) => {
 
 // get product photo
 
-export const productPhotController = async(req,res) => {
+export const productPhotoController = async(req,res) => {
    try {
       const product = await ProductModel.findById(req.params.pid).select("photo");
       if(product.photo.data){
@@ -139,7 +139,7 @@ export const deleteProductController = async(req,res) => {
 
 export const updateProductController = async(req,res) => {
     try {
-        const { name, slug, description, price, category, quantity, shipping } =
+        const { name, description, price, category, quantity, shipping } =
           req.fields;
         const {photo} = req.files;
     
