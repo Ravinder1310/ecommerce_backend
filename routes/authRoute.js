@@ -1,5 +1,5 @@
 import express from "express"
-import {registerController,loginController, forgotPasswordController}  from "../controllers/authController.js"
+import {registerController,loginController, forgotPasswordController, updateProfileController}  from "../controllers/authController.js"
 import { LoginMiddleware, isAdmin } from "../middleware/authMiddleware.js";
 
 // router obj
@@ -29,5 +29,8 @@ router.get('/user-auth',LoginMiddleware, (req,res) => {
 router.get('/admin-auth',LoginMiddleware,isAdmin, (req,res) => {
     res.status(200).send({ok:true}); 
 })
+
+// update profile
+router.put('/profile',LoginMiddleware, updateProfileController)
 
 export default router;
