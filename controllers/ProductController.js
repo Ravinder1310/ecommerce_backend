@@ -2,7 +2,21 @@ import slugify from "slugify";
 import ProductModel from "../models/ProductModel.js";
 import fs from "fs";
 import CategoryModel from "../models/CategoryModel.js";
+import braintree from "braintree";
+import OrderModel from "../models/OrderModel.js";
+import dotenv from "dotenv"
 
+dotenv.config();
+
+// payment gateway
+var gateway = new braintree.BraintreeGateway({
+  environment: braintree.Environment.Sandbox, 
+  merchantId: process.env.BRAINTREE_MERCHANT_ID,
+  publicKey: process.env.BRAINTREE_PUBLIC_KEY,
+  privateKey: process.env.BRAINTREE_PRIVATE_KEY,
+});
+
+// create product controller
 export const createProductController = async (req, res) => {
   try {
     const { name, slug, description, price, category, quantity, shipping } =
@@ -50,7 +64,6 @@ export const createProductController = async (req, res) => {
 };
 
 // get all products controller
-
 export const getProductController = async (req, res) => {
   try {
     const products = await ProductModel.find({})
@@ -75,7 +88,6 @@ export const getProductController = async (req, res) => {
 };
 
 // get single products controller
-
 export const getSingleProductController = async (req, res) => {
   try {
     const product = await ProductModel.findOne({ slug: req.params.slug })
@@ -97,7 +109,6 @@ export const getSingleProductController = async (req, res) => {
 };
 
 // get product photo
-
 export const productPhotoController = async (req, res) => {
   try {
     const product = await ProductModel.findById(req.params.pid).select("photo");
@@ -116,7 +127,6 @@ export const productPhotoController = async (req, res) => {
 };
 
 // delete product controller
-
 export const deleteProductController = async (req, res) => {
   try {
     await ProductModel.findByIdAndDelete(req.params.pid).select("-photo");
@@ -135,7 +145,6 @@ export const deleteProductController = async (req, res) => {
 };
 
 // update product controller
-
 export const updateProductController = async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } =
@@ -251,7 +260,6 @@ export const productListController = async (req, res) => {
 };
 
 // search product controller
-
 export const searchProductController = async(req,res) => {
   try {
     const {keyword} = req.params;
@@ -272,6 +280,7 @@ export const searchProductController = async(req,res) => {
   }
 }
 
+// similar product controller
 export const similarProductController = async(req,res) => {
   try {
     const {pid,cid} = req.params;
@@ -293,6 +302,7 @@ export const similarProductController = async(req,res) => {
   }
 }
 
+// product category controller
 export const productCategoryController = async(req,res) => {
   try {
     const category = await CategoryModel.findOne({slug:req.params.slug});
@@ -309,5 +319,54 @@ export const productCategoryController = async(req,res) => {
       message:"Error in getting products according to single category",
       error
     })
+  }
+}
+
+// payment gateway controller
+export const BraintreeTokenController = async(req,res) => {
+  try {
+    gateway.clientToken.generate({}, function (err, response) {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.send(response);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// payment controller
+export const BraintreePaymentController = async(req,res) => {
+  try {
+    const { nonce, cart } = req.body;
+    let total = 0;
+    cart.map((i) => {
+      total += i.price;
+    });
+    let newTransaction = gateway.transaction.sale(
+      {
+        amount: total,
+        paymentMethodNonce: nonce,
+        options: {
+          submitForSettlement: true,
+        },
+      },
+      function (error, result) {
+        if (result) {
+          const order = new OrderModel({
+            products: cart,
+            payment: result,
+            buyer: req.user._id,
+          }).save();
+          res.json({ ok: true });
+        } else {
+          res.status(500).send(error);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
   }
 }
