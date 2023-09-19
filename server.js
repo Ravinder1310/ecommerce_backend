@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import Connection  from './config/db.js';
 import router from './routes/authRoute.js';
 import CategoryRoutes from "./routes/CategoryRoutes.js"
+import BrandRoutes from "./routes/BrandRoutes.js"
 import ProductRoutes from "./routes/ProductRoutes.js"
 import cors from "cors";
 
@@ -23,6 +24,7 @@ app.use(morgan('dev'));
 // routes
 app.use('/api/v1/auth',router);
 app.use('/api/v1/category', CategoryRoutes);
+app.use('/api/v1/brand', BrandRoutes);
 app.use('/api/v1/product',ProductRoutes)
 
 

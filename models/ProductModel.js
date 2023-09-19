@@ -23,6 +23,11 @@ const productSchema = new mongoose.Schema({
         ref:'Category',
         required:true
     },
+    brand:{
+        type:mongoose.ObjectId,
+        ref:'Brand',
+        required:true
+    },
     quantity:{
         type:Number,
         required:true
