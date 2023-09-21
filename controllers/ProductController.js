@@ -5,7 +5,6 @@ import CategoryModel from "../models/CategoryModel.js";
 import braintree from "braintree";
 import OrderModel from "../models/OrderModel.js";
 import dotenv from "dotenv"
-import BrandModel from "../models/BrandModel.js";
 
 dotenv.config();
 
@@ -20,7 +19,7 @@ var gateway = new braintree.BraintreeGateway({
 // create product controller
 export const createProductController = async (req, res) => {
   try {
-    const { name, slug, description, price, category, brand, quantity, shipping } =
+    const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
 
@@ -34,8 +33,6 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "Price is Required" });
       case !category:
         return res.status(500).send({ error: "Category is Required" });
-      case !brand:
-        return res.status(500).send({ error: "Brand is Required" });
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
       case photo && photo.size > 1000000:
@@ -150,7 +147,7 @@ export const deleteProductController = async (req, res) => {
 // update product controller
 export const updateProductController = async (req, res) => {
   try {
-    const { name, description, price, category, brand, quantity, shipping } =
+    const { name, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
 
@@ -164,8 +161,6 @@ export const updateProductController = async (req, res) => {
         return res.status(500).send({ error: "Price is Required" });
       case !category:
         return res.status(500).send({ error: "Category is Required" });
-      case !brand:
-        return res.status(500).send({ error: "Brand is Required" });
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
       case photo && photo.size > 1000000:
@@ -206,7 +201,6 @@ export const productFilterController = async (req, res) => {
     const { checked, radio } = req.body;
     let args = {};
     if (checked.length > 0) args.category = checked;
-    if (checked.length > 0) args.brand = checked;
     if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
     const products = await ProductModel.find(args);
     res.status(200).send({
@@ -272,7 +266,6 @@ export const searchProductController = async(req,res) => {
     const results = await ProductModel.find({
       $or:[
         {name:{$regex :keyword, $options:"i"}},
-        {brand:{$regex :keyword, $options:"i"}},
         {description:{$regex :keyword, $options:"i"}}
       ]
     }).select('-photo');
@@ -317,26 +310,6 @@ export const productCategoryController = async(req,res) => {
     res.status(200).send({
       success:true,
       category,
-      products
-    })
-  } catch (error) {
-    console.log(error);;
-    res.status(500).send({
-      success:false,
-      message:"Error in getting products according to single category",
-      error
-    })
-  }
-}
-
-// product brand controller
-export const productBrandController = async(req,res) => {
-  try {
-    const brand = await BrandModel.findOne({slug:req.params.slug});
-    const products = await ProductModel.find({brand}).populate('brand');
-    res.status(200).send({
-      success:true,
-      brand,
       products
     })
   } catch (error) {
