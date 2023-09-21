@@ -4,6 +4,25 @@ import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken"
 
 
+// get all users
+export const UserController = async (req, res) => {
+  try {
+    const users = await UserModel.find({});
+    res.status(200).send({
+      success: true,
+      message: "All Users List",
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while getting all users",
+    });
+  }
+}
+
 export const registerController = async(req,res) => {
     try {
         const {name,email,password,phone,address,answer} = req.body;
