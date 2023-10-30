@@ -51,7 +51,7 @@ export const createProductController = async (req, res) => {
         contentType: photo.type,
       }));
     }
-    product.offerPrice = price - ((price * offer)/100)
+    product.offerPrice = Math.floor(price - ((price * offer)/100))
     await product.save();
     res.status(201).send({
       success: true,
