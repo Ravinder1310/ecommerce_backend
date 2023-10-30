@@ -18,6 +18,14 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    offer:{
+        type:Number,
+        required:true
+    },
+    offerPrice:{
+        type:Number,
+        required:true
+    },
     category:{
         type:mongoose.ObjectId,
         ref:'Category',
