@@ -21,7 +21,7 @@ export const createProductController = async (req, res) => {
   try {
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
-    const { photo } = req.files;
+    const { photos } = req.files;
 
     // validation
     switch (true) {
@@ -35,17 +35,19 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "Category is Required" });
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
-      case photo && photo.size > 1000000:
-        return res
-          .status(500)
-          .send({ error: "Photo is required or should be less then 1mb" });
+      // case photos && photos.size > 1000000:
+      //   return res
+      //     .status(500)
+      //     .send({ error: "Photo is required or should be less then 1mb" });
       default:
         break;
     }
     const product = new ProductModel({ ...req.fields, slug: slugify(name) });
-    if (photo) {
-      product.photo.data = fs.readFileSync(photo.path);
-      product.photo.contentType = photo.type;
+    if (photos) {
+      product.photos = photos.map((photo) => ({
+        data: fs.readFileSync(photo.path),
+        contentType: photo.type,
+      }));
     }
     await product.save();
     res.status(201).send({
@@ -68,7 +70,7 @@ export const getProductController = async (req, res) => {
   try {
     const products = await ProductModel.find({})
       .populate("category")
-      .select("-photo")
+      .select("-photos.data")
       .sort({ createdAt: -1 });
     res.status(200).send({
       success: true,
