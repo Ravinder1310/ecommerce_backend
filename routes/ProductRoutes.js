@@ -3,14 +3,33 @@ import { LoginMiddleware, isAdmin } from "../middleware/authMiddleware.js";
 import { BraintreePaymentController, BraintreeTokenController, createProductController, deleteProductController, getProductController, getSingleProductController, productCategoryController, productCountController, productFilterController, productListController, productPhotoController, searchProductController, similarProductController, updateProductController } from "../controllers/ProductController.js";
 import formidable from "express-formidable"
 import { BraintreeGateway } from "braintree";
+import multer from "multer";
+import path from "path"; 
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "path_to_your_photo_directory");
+  },
+  filename: (req, file, callback) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    callback(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 }, // Adjust the file size limit as needed
+});
 
 // routes
 router.post(
   "/create-product",
   LoginMiddleware,
   isAdmin,
+  upload.array("photos", 5),
   formidable(),
   createProductController
 );
@@ -20,6 +39,7 @@ router.put(
     "/update-product/:pid",
     LoginMiddleware,
     isAdmin,
+    upload.array("photos", 5),
     formidable(),
     updateProductController
   );
