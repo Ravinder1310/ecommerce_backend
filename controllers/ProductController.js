@@ -19,7 +19,18 @@ var gateway = new braintree.BraintreeGateway({
 });
 
 
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "path_to_your_photo_directory");
+  },
+  filename: (req, file, callback) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    callback(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
+});
 
+export const upload = multer({ storage });
 
 // create product controller
 export const createProductController = async (req, res) => {
@@ -53,7 +64,7 @@ export const createProductController = async (req, res) => {
     if (photos) {
       product.photos = photos.map((photo) => ({
         data: fs.readFileSync(photo.path),
-        contentType: photo.type,
+        contentType: photo.mimetype,
       }));
     }
     product.offerPrice = Math.floor(price - ((price * offer)/100))
