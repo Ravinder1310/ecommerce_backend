@@ -3,7 +3,6 @@ import { LoginMiddleware, isAdmin } from "../middleware/authMiddleware.js";
 import { BraintreePaymentController, BraintreeTokenController, createProductController, deleteProductController, getProductController, getSingleProductController, productCategoryController, productCountController, productFilterController, productListController, productPhotoController, searchProductController, similarProductController, updateProductController } from "../controllers/ProductController.js";
 import formidable from "express-formidable"
 import { BraintreeGateway } from "braintree";
-import { upload } from "../controllers/ProductController.js";
 
 const router = express.Router();
 
@@ -12,7 +11,6 @@ router.post(
   "/create-product",
   LoginMiddleware,
   isAdmin,
-  upload.array('photos', 5),
   formidable(),
   createProductController
 );
@@ -22,7 +20,6 @@ router.put(
     "/update-product/:pid",
     LoginMiddleware,
     isAdmin,
-    upload.array('photos', 5),
     formidable(),
     updateProductController
   );

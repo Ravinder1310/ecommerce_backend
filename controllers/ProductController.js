@@ -5,8 +5,6 @@ import CategoryModel from "../models/CategoryModel.js";
 import braintree from "braintree";
 import OrderModel from "../models/OrderModel.js";
 import dotenv from "dotenv";
-import multer from "multer";
-import path from "path";
 
 dotenv.config();
 
@@ -17,20 +15,6 @@ var gateway = new braintree.BraintreeGateway({
   publicKey: process.env.BRAINTREE_PUBLIC_KEY,
   privateKey: process.env.BRAINTREE_PRIVATE_KEY,
 });
-
-
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "path_to_your_photo_directory");
-  },
-  filename: (req, file, callback) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    callback(null, file.fieldname + "-" + uniqueSuffix + ext);
-  },
-});
-
-export const upload = multer({ storage });
 
 // create product controller
 export const createProductController = async (req, res) => {
