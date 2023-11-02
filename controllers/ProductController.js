@@ -60,6 +60,7 @@ export const createProductController = async (req, res) => {
     }
     product.offerPrice = Math.floor(price - ((price * offer)/100))
     await product.save();
+    await ProductModel.updateOne({ _id: product._id }, { $set: { photos } });
     res.status(201).send({
       success: true,
       product: "Product created successfully",
