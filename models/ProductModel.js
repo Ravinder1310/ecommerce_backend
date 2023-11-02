@@ -35,12 +35,12 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    photos:[
+    photos:
         {
-          data: Buffer,
-          contentType: String,
+          type: Array,
+          required: true,
         },
-      ],
+      
     shipping:{
         type:Boolean
     } 
