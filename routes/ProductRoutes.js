@@ -6,12 +6,27 @@ import { BraintreeGateway } from "braintree";
 
 const router = express.Router();
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Create an 'uploads' folder to store files
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 // routes
 router.post(
   "/create-product",
   LoginMiddleware,
   isAdmin,
   formidable(),
+  upload.array('photos', 5),
   createProductController
 );
 
@@ -21,6 +36,7 @@ router.put(
     LoginMiddleware,
     isAdmin,
     formidable(),
+    upload.array('photos', 5),
     updateProductController
   );
 
