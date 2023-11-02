@@ -48,10 +48,11 @@ export const createProductController = async (req, res) => {
     if (photos) {
       product.photos = photos.map((photo) => ({
         data: fs.readFileSync(photo.path),
-        contentType: photo.mimetype,
+        contentType: photo.type,
       }));
     }
     product.offerPrice = Math.floor(price - ((price * offer)/100))
+    console.log(product)
     await product.save();
     res.status(201).send({
       success: true,
