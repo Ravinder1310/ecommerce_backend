@@ -24,25 +24,32 @@ export const createProductController = async (req, res) => {
     const { photos } = req.files;
 
     // validation
-    switch (true) {
-      case !name:
-        return res.status(500).send({ error: "Name is Required" });
-      case !description:
-        return res.status(500).send({ error: "Description is Required" });
-      case !price:
-        return res.status(500).send({ error: "Price is Required" });
-      case !offer:
-        return res.status(500).send({ error: "Offer is Required" });
-      case !category:
-        return res.status(500).send({ error: "Category is Required" });
-      case !quantity:
-        return res.status(500).send({ error: "Quantity is Required" });
-      // case photos && photos.size > 1000000:
-      //   return res
-      //     .status(500)
-      //     .send({ error: "Photo is required or should be less then 1mb" });
-      default:
-        break;
+    if (!name) {
+      return res.status(400).send({ error: "Name is required" });
+    }
+    if (!description) {
+      return res.status(400).send({ error: "Description is required" });
+    }
+    if (!price) {
+      return res.status(400).send({ error: "Price is required" });
+    }
+    if (!offer) {
+      return res.status(400).send({ error: "Offer is required" });
+    }
+    if (!category) {
+      return res.status(400).send({ error: "Category is required" });
+    }
+    if (!quantity) {
+      return res.status(400).send({ error: "Quantity is required" });
+    }
+
+    // check if photos exist and validate size
+    if (photos && photos.length > 0) {
+      for (const photo of photos) {
+        if (photo.size > 1000000) {
+          return res.status(400).send({ error: "Photo must be less than 1mb" });
+        }
+      }
     }
     const product = new ProductModel({ ...req.fields, slug: slugify(name) });
     if (photos) {
