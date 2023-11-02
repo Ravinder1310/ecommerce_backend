@@ -3,29 +3,29 @@ import { LoginMiddleware, isAdmin } from "../middleware/authMiddleware.js";
 import { BraintreePaymentController, BraintreeTokenController, createProductController, deleteProductController, getProductController, getSingleProductController, productCategoryController, productCountController, productFilterController, productListController, productPhotoController, searchProductController, similarProductController, updateProductController } from "../controllers/ProductController.js";
 import formidable from "express-formidable"
 import { BraintreeGateway } from "braintree";
-import multer from "multer";
+// import multer from "multer";
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Create an 'uploads' folder to store files
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads/'); // Create an 'uploads' folder to store files
+//   },
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 // routes
 router.post(
   "/create-product",
   LoginMiddleware,
   isAdmin,
+  // upload.array('photos', 5),
   formidable(),
-  upload.array('photos', 5),
   createProductController
 );
 
@@ -34,8 +34,8 @@ router.put(
     "/update-product/:pid",
     LoginMiddleware,
     isAdmin,
+    // upload.array('photos', 5),
     formidable(),
-    upload.array('photos', 5),
     updateProductController
   );
 
