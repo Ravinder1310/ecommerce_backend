@@ -41,6 +41,9 @@ export const createProductController = async (req, res) => {
     if (!price) {
       return res.status(400).send({ error: "Price is required" });
     }
+    if (!offer) {
+      return res.status(400).send({ error: "Offer is required" });
+    }
     if (!category) {
       return res.status(400).send({ error: "Category is required" });
     }
