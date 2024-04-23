@@ -22,10 +22,6 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    offerPrice:{
-        type:Number,
-        required:true
-    },
     category:{
         type:mongoose.ObjectId,
         ref:'Category',
@@ -35,12 +31,14 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    photos:
-        {
-          type: Array,
-          required: true,
-        },
-      
+    photo1:{
+        type:Buffer,
+        contentType:String
+    },
+    photo2:{
+        type:Buffer,
+        contentType:String
+    },
     shipping:{
         type:Boolean
     } 

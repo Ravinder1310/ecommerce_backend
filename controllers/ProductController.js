@@ -5,6 +5,7 @@ import CategoryModel from "../models/CategoryModel.js";
 import braintree from "braintree";
 import OrderModel from "../models/OrderModel.js";
 import dotenv from "dotenv";
+import upload1 from "../middleware/upload.js";
 
 dotenv.config();
 
@@ -16,12 +17,19 @@ var gateway = new braintree.BraintreeGateway({
   privateKey: process.env.BRAINTREE_PRIVATE_KEY,
 });
 
+
 // create product controller
+
 export const createProductController = async (req, res) => {
+  console.log("createProductController called");
+  console.log("req.fields: ", req.fields);
+  console.log("req.files: ", req.files);
   try {
-    const { name, slug, description, price, offer, category, quantity, shipping } =
-      req.fields;
-    const { photos } = req.files;
+    console.log("createProductController called");
+   
+    const { name, slug, description, price, offer,offerPrice, category, quantity } =
+      req.body;
+    const {photo1,photo2} = req.files;
 
     // validation
     if (!name) {
@@ -33,45 +41,44 @@ export const createProductController = async (req, res) => {
     if (!price) {
       return res.status(400).send({ error: "Price is required" });
     }
-    if (!offer) {
-      return res.status(400).send({ error: "Offer is required" });
-    }
     if (!category) {
       return res.status(400).send({ error: "Category is required" });
     }
     if (!quantity) {
       return res.status(400).send({ error: "Quantity is required" });
     }
+    if(!photo1){
+      return res.status(400).send({ error: "Photo is required is required" });
+    }
+    // create product
+    const product = new ProductModel({
+      name,
+      slug,
+      description,
+      price,
+      offer,
+      offerPrice,
+      category,
+      quantity,
+      photo1,
+      photo2,
+      slug:slugify(name)
+    });
 
-    // check if photos exist and validate size
-    if (photos && photos.length > 0) {
-      for (const photo of photos) {
-        if (photo.size > 1000000) {
-          return res.status(400).send({ error: "Photo must be less than 1mb" });
-        }
-      }
-    }
-    const product = new ProductModel({ ...req.fields, slug: slugify(name) });
-    if (photos) {
-      product.photos = photos.map((photo) => ({
-        data: fs.readFileSync(photo.path),
-        contentType: photo.mimetype,
-      }));
-    }
-    product.offerPrice = Math.floor(price - ((price * offer)/100))
+    // save product to database
     await product.save();
-    await ProductModel.updateOne({ _id: product._id }, { $set: { photos } });
+
+    // send response
     res.status(201).send({
       success: true,
-      product: "Product created successfully",
+      message: "Product created successfully",
       product,
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in creating product",
-      error,
+      error: "Error creating product",
     });
   }
 };
@@ -386,3 +393,4 @@ export const BraintreePaymentController = async(req,res) => {
     console.log(error);
   }
 }
+
