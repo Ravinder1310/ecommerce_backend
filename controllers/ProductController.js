@@ -5,7 +5,7 @@ import CategoryModel from "../models/CategoryModel.js";
 import braintree from "braintree";
 import OrderModel from "../models/OrderModel.js";
 import dotenv from "dotenv";
-import upload1 from "../middleware/upload.js";
+// import upload1 from "../middleware/upload.js";
 
 dotenv.config();
 
@@ -21,14 +21,10 @@ var gateway = new braintree.BraintreeGateway({
 // create product controller
 
 export const createProductController = async (req, res) => {
-  console.log("createProductController called");
-  console.log("req.fields: ", req.fields);
-  console.log("req.files: ", req.files);
   try {
-    console.log("createProductController called");
    
     const { name, slug, description, price, offer,offerPrice, category, quantity } =
-      req.body;
+      req.fields;
     const {photo1,photo2} = req.files;
 
     // validation
@@ -67,6 +63,14 @@ export const createProductController = async (req, res) => {
       photo2,
       slug:slugify(name)
     });
+    if(photo1){
+      product.photo1.data = fs.readFileSync(photo1.path);
+      product.photo1.contentType = photo1.type
+    }
+    if(photo2){
+      product.photo2.data = fs.readFileSync(photo2.path);
+      product.photo2.contentType = photo2.type
+    }
 
     // save product to database
     await product.save();
@@ -132,10 +136,10 @@ export const getSingleProductController = async (req, res) => {
 // get product photo
 export const productPhotoController = async (req, res) => {
   try {
-    const product = await ProductModel.findById(req.params.pid).select("-photos.data");
-    if (product.photos.data) {
-      res.set("Content-type", product.photos.contentType);
-      return res.status(200).send(product.photos.data);
+    const product = await ProductModel.findById(req.params.pid).select("-photo1.data");
+    if (product.photo1.data) {
+      res.set("Content-type", product.photo1.contentType);
+      return res.status(200).send(product.photo1.data);
     }
   } catch (error) {
     console.log(error);
@@ -150,7 +154,7 @@ export const productPhotoController = async (req, res) => {
 // delete product controller
 export const deleteProductController = async (req, res) => {
   try {
-    await ProductModel.findByIdAndDelete(req.params.pid).select("-photos.data");
+    await ProductModel.findByIdAndDelete(req.params.pid).select("-photo1.data");
     res.status(200).send({
       success: true,
       message: "Product deleted successfully",
@@ -170,7 +174,7 @@ export const updateProductController = async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } =
       req.fields;
-    const { photos } = req.files;
+    const { photo1,photo2 } = req.files;
 
     // validation
     switch (true) {
@@ -198,11 +202,13 @@ export const updateProductController = async (req, res) => {
       { ...req.fields, slug: slugify(name) },
       { new: true }
     );
-    if (photos) {
-      product.photos = photos.map((photo) => ({
-        data: fs.readFileSync(photo.path),
-        contentType: photo.type,
-      }));
+    if(photo1){
+      product.photo1.data = fs.readFileSync(photo1.path);
+      product.photo1.contentType = photo1.type
+    }
+    if(photo2){
+      product.photo2.data = fs.readFileSync(photo2.path);
+      product.photo2.contentType = photo2.type
     }
     product.offerPrice = Math.floor(price - ((price * offer)/100))
     await product.save();
@@ -313,7 +319,7 @@ export const similarProductController = async(req,res) => {
     const products = await ProductModel.find({
       category:cid,
       _id:{$ne:pid}
-    }).select('-photos.data').limit(3).populate('category');
+    }).select('-photo1.data').limit(3).populate('category');
     res.status(200).send({
       success:true,
       products

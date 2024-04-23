@@ -4,7 +4,7 @@ import { BraintreePaymentController, BraintreeTokenController, createProductCont
 import formidable from "express-formidable"
 import { BraintreeGateway } from "braintree";
 
-import upload1 from "../middleware/upload.js";
+// import upload1 from "../middleware/upload.js";
 
 const router = express.Router();
 
@@ -14,10 +14,7 @@ router.post(
   "/create-product",
   LoginMiddleware,
   isAdmin,
-  upload1.fields([
-    { name: "photo1", maxCount: 1 },
-    { name: "photo2", maxCount: 1 },
-  ]),
+  formidable(),
   createProductController
 );
 
@@ -26,7 +23,6 @@ router.put(
     "/update-product/:pid",
     LoginMiddleware,
     isAdmin,
-    // upload.array('photos', 5),
     formidable(),
     updateProductController
   );
