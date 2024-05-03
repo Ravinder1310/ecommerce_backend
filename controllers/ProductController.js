@@ -139,7 +139,7 @@ export const productPhotoController = async (req, res) => {
     const product = await ProductModel.findById(req.params.pid).select("-photo1.data");
     if (product.photo1.data) {
       res.set("Content-type", product.photo1.contentType);
-      return res.status(200).send(product.photo1.data.toString('base64'));
+      return res.status(200).send(`data:${product.photo1.contentType};base64,${product.photo1.data.toString('base64')}`);
     }
   } catch (error) {
     console.log(error);
