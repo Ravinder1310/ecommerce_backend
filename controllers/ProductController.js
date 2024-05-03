@@ -116,7 +116,7 @@ export const getProductController = async (req, res) => {
 export const getSingleProductController = async (req, res) => {
   try {
     const product = await ProductModel.findOne({ slug: req.params.slug })
-      .select("-photos.data")
+      .select("-photo1.data")
       .populate("category");
     res.status(200).send({
       success: true,
@@ -172,7 +172,7 @@ export const deleteProductController = async (req, res) => {
 // update product controller
 export const updateProductController = async (req, res) => {
   try {
-    const { name, description, price, category, quantity, shipping } =
+    const { name, description, price, offer, category, quantity, shipping } =
       req.fields;
     const { photo1,photo2 } = req.files;
 
