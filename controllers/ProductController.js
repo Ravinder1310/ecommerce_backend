@@ -273,7 +273,7 @@ export const productListController = async (req, res) => {
     const perPage = 10;
     const page = req.params.page ? req.params.page : 1;
     const products = await ProductModel.find({})
-      .select("-photos.data")
+      .select("-photo1.data")
       .skip((page - 1) * perPage)
       .limit(perPage)
       .sort({ createdAt: -1 });
