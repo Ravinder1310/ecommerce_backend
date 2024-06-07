@@ -26,7 +26,7 @@ app.use(morgan('dev'));
 app.use('/api/v1/auth',router);
 app.use('/api/v1/category', CategoryRoutes);
 app.use('/api/v1/product',ProductRoutes);
-// app.use('/uploads', express.static('uploads'))
+app.use('/uploads', express.static('uploads'))
 
 
 app.get("/", (req,res)=>{

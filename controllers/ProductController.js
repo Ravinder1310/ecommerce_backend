@@ -20,12 +20,18 @@ var gateway = new braintree.BraintreeGateway({
 
 // create product controller
 
+
+
 export const createProductController = async (req, res) => {
   try {
    
     const { name, slug, description, price, offer,offerPrice, category, quantity } =
-      req.fields;
-    const {photo1,photo2} = req.files;
+      req.body;
+      const {photo1,photo2} = req.files;
+      console.log(req.body);
+
+      const photoPath1 = `/uploads/${photo1[0].filename}`;
+      const photoPath2 = `/uploads/${photo2[0].filename}`;
 
     // validation
     if (!name) {
@@ -49,28 +55,21 @@ export const createProductController = async (req, res) => {
     if(!photo1){
       return res.status(400).send({ error: "Photo is required is required" });
     }
+    if(!photo2){
+      return res.status(400).send({ error: "Photo is required is required" });
+    }
     // create product
     const product = new ProductModel({
       name,
-      slug,
       description,
       price,
       offer,
-      offerPrice,
       category,
       quantity,
-      photo1,
-      photo2,
+      photo1:photoPath1,
+      photo2:photoPath2,
       slug:slugify(name)
     });
-    if(photo1){
-      product.photo1.data = fs.readFileSync(photo1.path);
-      product.photo1.contentType = photo1.type
-    }
-    if(photo2){
-      product.photo2.data = fs.readFileSync(photo2.path);
-      product.photo2.contentType = photo2.type
-    }
 
     // save product to database
     await product.save();

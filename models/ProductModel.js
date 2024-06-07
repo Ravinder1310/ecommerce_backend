@@ -31,14 +31,21 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    photo1:{
-        data:Buffer,
-        contentType:String
+    photo1: {
+        type: String,
     },
-    photo2:{
-        data:Buffer,
-        contentType:String
+    photo2: {
+        type: String,
     },
+      // photo3: {
+      //   type: String,
+      // },
+      // photo4: {
+      //   type: String,
+      // },
+      // photo5: {
+      //   type: String,
+      // },
     shipping:{
         type:Boolean
     } 
