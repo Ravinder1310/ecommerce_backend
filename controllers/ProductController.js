@@ -30,8 +30,8 @@ export const createProductController = async (req, res) => {
       const {photo1,photo2} = req.files;
       console.log(req.body);
 
-      const photoPath1 = `/uploads/${photo1[0].filename}`;
-      const photoPath2 = `/uploads/${photo2[0].filename}`;
+      const photoPath1 = `${process.env.BACKEND_URL}/uploads/${photo1[0].filename}`;
+      const photoPath2 = `${process.env.BACKEND_URL}/uploads/${photo2[0].filename}`;
 
     // validation
     if (!name) {
