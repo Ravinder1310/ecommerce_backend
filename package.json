@@ -2,7 +2,7 @@
   "name": "watches_backend",
   "version": "1.0.0",
   "description": "Ecommerce rest api",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node server.js",
