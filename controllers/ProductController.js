@@ -25,13 +25,13 @@ var gateway = new braintree.BraintreeGateway({
 export const createProductController = async (req, res) => {
   try {
    
-    const { name, slug, description, price, offer,offerPrice, category, quantity } =
+    const { name, slug, description, price, offer,offerPrice, category, quantity, photo1, photo2, photo3, photo4, photo5 } =
       req.body;
-      const {photo1,photo2} = req.files;
-      console.log(req.body);
+      // const {photo1,photo2} = req.files;
+      // console.log(req.body);
 
-      const photoPath1 = `${process.env.BACKEND_URL}/uploads/${photo1[0].filename}`;
-      const photoPath2 = `${process.env.BACKEND_URL}/uploads/${photo2[0].filename}`;
+      // const photoPath1 = `${process.env.BACKEND_URL}/uploads/${photo1[0].filename}`;
+      // const photoPath2 = `${process.env.BACKEND_URL}/uploads/${photo2[0].filename}`;
 
     // validation
     if (!name) {
@@ -66,8 +66,11 @@ export const createProductController = async (req, res) => {
       offer,
       category,
       quantity,
-      photo1:photoPath1,
-      photo2:photoPath2,
+      photo1,
+      photo2,
+      photo3,
+      photo4,
+      photo5,
       slug:slugify(name)
     });
 

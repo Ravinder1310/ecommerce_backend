@@ -17,6 +17,7 @@ Connection();
 // rest obj
 
 const app = express();
+app.use('/uploads', express.static('uploads'))
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(express.json())
@@ -26,7 +27,6 @@ app.use(morgan('dev'));
 app.use('/api/v1/auth',router);
 app.use('/api/v1/category', CategoryRoutes);
 app.use('/api/v1/product',ProductRoutes);
-app.use('/uploads', express.static('uploads'))
 
 
 app.get("/", (req,res)=>{
