@@ -18,7 +18,20 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+      storage: storage,
+      limits: {
+        fileSize: 1024 * 1024 * 5, // 5MB
+        parameterLimit: 10000,
+        fields: [
+          { name: "photo1", maxCount: 1 },
+          { name: "photo2", maxCount: 1 },
+          { name: "photo3", maxCount: 1 },
+          { name: "photo4", maxCount: 1 },
+          { name: "photo5", maxCount: 1 }
+        ]
+      }
+    });
 
 
 // routes

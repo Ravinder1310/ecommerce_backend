@@ -25,8 +25,9 @@ var gateway = new braintree.BraintreeGateway({
 export const createProductController = async (req, res) => {
   try {
    
-    const { name, slug, description, price, offer,offerPrice, category, quantity, photo1, photo2, photo3, photo4, photo5 } =
+    const { name, slug, description, price, offer,offerPrice, category, quantity } =
       req.body;
+    const {photo1, photo2, photo3, photo4, photo5} = req.files
       // const {photo1,photo2} = req.files;
       // console.log(req.body);
 
@@ -66,11 +67,11 @@ export const createProductController = async (req, res) => {
       offer,
       category,
       quantity,
-      photo1,
-      photo2,
-      photo3,
-      photo4,
-      photo5,
+      photo1: photo1[0].path,  // save the file path
+      photo2: photo2[0].path,
+      photo3: photo3[0].path,  // optional photos
+      photo4: photo4[0].path,
+      photo5: photo5[0].path,
       slug:slugify(name)
     });
 
@@ -140,8 +141,8 @@ export const productPhotoController = async (req, res) => {
   try {
     const product = await ProductModel.findById(req.params.pid).select("-photo1.data");
     if (product.photo1.data) {
-      const base64Image = `data:${product.photo1.contentType};base64,${product.photo1.data.toString('base64')}`;
-      return res.status(200).send({ photo: base64Image });;
+      
+      return res.status(200).send({ photo: product.photo1 });;
     }
   } catch (error) {
     console.log(error);
