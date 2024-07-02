@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "install": "npm install bcrypt --build-from-source"
   },
   "keywords": [],
   "author": "ravinder",
